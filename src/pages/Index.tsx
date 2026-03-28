@@ -127,8 +127,8 @@ export default function Index() {
         style={{ background: "linear-gradient(to bottom, rgba(10,10,12,0.96), transparent)", backdropFilter: "blur(12px)" }}>
         <button onClick={() => scrollTo("main")}
           className="glitch-wrapper font-oswald text-white text-xl font-bold tracking-[0.2em]"
-          data-text="АРТИСТ">
-          АРТИСТ
+          data-text="МРАКОБЕСИЕ 2.0">
+          МРАКОБЕСИЕ 2.0
         </button>
 
         <div className="hidden md:flex items-center gap-8">
@@ -191,14 +191,14 @@ export default function Index() {
           </div>
 
           <h1 className="glitch-wrapper font-oswald text-white leading-none mb-3"
-            data-text="АРТИСТ"
+            data-text="МРАКОБЕСИЕ 2.0"
             style={{
-              fontSize: "clamp(80px, 15vw, 200px)",
+              fontSize: "clamp(48px, 10vw, 140px)",
               fontWeight: 700,
               letterSpacing: "-0.02em",
               animation: "fadeInUp 1s ease 0.4s both",
             }}>
-            АРТИСТ
+            МРАКОБЕСИЕ 2.0
           </h1>
 
           <p className="font-cormorant text-2xl md:text-3xl mb-10 italic"
@@ -206,7 +206,7 @@ export default function Index() {
               color: "rgba(255,255,255,0.45)",
               animation: "fadeInUp 1s ease 0.7s both"
             }}>
-            Темнота между звуками
+            Тьма как основа. Звук как оружие.
           </p>
 
           <div className="flex flex-wrap gap-4" style={{ animation: "fadeInUp 1s ease 1s both" }}>
@@ -380,15 +380,15 @@ export default function Index() {
                 style={{ fontSize: "clamp(40px, 7vw, 80px)" }}>ИСТОРИЯ</h2>
               <p className="font-cormorant text-xl leading-relaxed mb-6"
                 style={{ color: "rgba(255,255,255,0.6)" }}>
-                Музыкант, работающий на границе электронного и индустриального звука. Начал путь в подвальных клубах Москвы, где темнота между ударами становилась главным инструментом.
+                Мракобесие 2.0 — проект на стыке электронного и индустриального звука. Тяжёлые текстуры, тёмная лирика и атмосфера неизбежности — всё это отличительные черты уникального звука.
               </p>
               <p className="font-mono-ibm text-sm leading-relaxed"
                 style={{ color: "rgba(255,255,255,0.32)", lineHeight: 1.8 }}>
-                Дебютный альбом SIGNAL вышел в 2023 году и собрал более 2 миллионов прослушиваний. Второй альбом VOID.01 закрепил статус одного из самых самобытных голосов современной сцены.
+                Музыка доступна на Яндекс Музыке и VK Музыке. Живые выступления — редкость, каждое из которых становится ритуалом для тех, кто оказался в нужном месте в нужное время.
               </p>
 
               <div className="mt-10 space-y-4">
-                {[["2019", "Первый сингл"], ["2021", "Дебютный тур"], ["2023", "Альбом SIGNAL"], ["2025", "Альбом VOID.01"]].map(([y, e]) => (
+                {[["2020", "Первые релизы"], ["2022", "Рост аудитории"], ["2023", "Прорыв в андеграунде"], ["2025", "Новый этап"]].map(([y, e]) => (
                   <div key={y} className="flex items-center gap-4">
                     <div className="font-mono-ibm text-xs neon-text shrink-0 w-10">{y}</div>
                     <div className="h-px flex-1" style={{ background: "rgba(176,48,255,0.25)" }} />
@@ -490,7 +490,7 @@ export default function Index() {
       {/* ─── FOOTER ─── */}
       <footer className="py-8 px-8 md:px-16 flex flex-col md:flex-row items-center justify-between gap-4"
         style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-        <div className="font-oswald text-white text-xl font-bold tracking-[0.2em]">АРТИСТ</div>
+        <div className="font-oswald text-white text-xl font-bold tracking-[0.2em]">МРАКОБЕСИЕ 2.0</div>
         <div className="font-mono-ibm text-xs" style={{ color: "rgba(255,255,255,0.18)", letterSpacing: "0.15em" }}>
           © 2026 — ВСЕ ПРАВА ЗАЩИЩЕНЫ
         </div>
