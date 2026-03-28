@@ -13,12 +13,12 @@ MERCH_MAP = {
 
 ALLOWED_USERNAME = 'flaskiy'
 
-MERCH_LIST = '\n'.join([f'  <code>/stock {code} <кол-во></code> — {name}' for code, (_, name) in MERCH_MAP.items()])
+MERCH_LIST = '\n'.join([f'  /stock {code} N — {name}' for code, (_, name) in MERCH_MAP.items()])
 HELP_TEXT = (
-    '📦 <b>Управление остатками</b>\n\n'
+    '📦 Управление остатками\n\n'
     + MERCH_LIST +
-    '\n\nПример: <code>/stock 101 20</code> — установит 20 шт для VOID HOODIE\n\n'
-    '<i>/stock_info — текущие остатки</i>'
+    '\n\nПример: /stock 101 20 — установит 20 шт для VOID HOODIE\n\n'
+    '/stock_info — текущие остатки'
 )
 
 
@@ -34,7 +34,7 @@ def tg_api(token: str, method: str, payload: dict):
 
 
 def send_message(token: str, chat_id, text: str):
-    tg_api(token, 'sendMessage', {'chat_id': chat_id, 'text': text, 'parse_mode': 'HTML'})
+    tg_api(token, 'sendMessage', {'chat_id': chat_id, 'text': text})
 
 
 def handler(event: dict, context) -> dict:
@@ -113,11 +113,11 @@ def handler(event: dict, context) -> dict:
 
         # Обратный маппинг: db_id → code
         db_to_code = {db_id: code for code, (db_id, _) in MERCH_MAP.items()}
-        lines = ['📦 <b>Текущие остатки:</b>\n']
+        lines = ['📦 Текущие остатки:\n']
         for row_id, name, stock_left in rows:
             code = db_to_code.get(row_id, '?')
             qty = '∞' if stock_left is None else str(stock_left)
-            lines.append(f'[{code}] {name} — <b>{qty} шт</b>')
+            lines.append(f'[{code}] {name} — {qty} шт')
         send_message(token, chat_id, '\n'.join(lines))
         return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*'}, 'body': 'ok'}
 
@@ -125,7 +125,7 @@ def handler(event: dict, context) -> dict:
     if text.startswith('/stock'):
         parts = text.split()
         if len(parts) != 3:
-            send_message(token, chat_id, '❌ Формат: <code>/stock 101 20</code>\n\n' + HELP_TEXT)
+            send_message(token, chat_id, '❌ Формат: /stock 101 20\n\n' + HELP_TEXT)
             return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*'}, 'body': 'ok'}
 
         try:
@@ -152,7 +152,7 @@ def handler(event: dict, context) -> dict:
         cur.close()
         conn.close()
 
-        send_message(token, chat_id, f'✅ <b>{merch_name}</b> — остаток обновлён: <b>{qty} шт</b>')
+        send_message(token, chat_id, f'✅ {merch_name} — остаток обновлён: {qty} шт')
         return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*'}, 'body': 'ok'}
 
     send_message(token, chat_id, HELP_TEXT)
