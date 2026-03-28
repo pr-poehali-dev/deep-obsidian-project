@@ -1,6 +1,7 @@
 import json
 import os
 import psycopg2
+import urllib.request
 
 def handler(event: dict, context) -> dict:
     """Оформление заказа: создаёт заказ из корзины, списывает остатки."""
@@ -65,6 +66,35 @@ def handler(event: dict, context) -> dict:
     cur.execute("DELETE FROM cart_items WHERE session_id = %s", (session_id,))
     conn.commit()
     cur.close(); conn.close()
+
+    # Отправка уведомления в Telegram
+    try:
+        tg_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+        tg_chat = '-5236633853'
+        if tg_token:
+            lines = [f'🛒 <b>Новый заказ #{order_id}</b>']
+            lines.append(f'👤 {name}')
+            if email: lines.append(f'📧 {email}')
+            if phone: lines.append(f'📞 {phone}')
+            if address: lines.append(f'📍 {address}')
+            lines.append('')
+            for item in cart:
+                _, qty, pname, price, _ = item
+                lines.append(f'• {pname} × {qty} — {qty * price:,.0f} ₽'.replace(',', ' '))
+            lines.append('')
+            lines.append(f'💰 <b>Итого: {total:,.0f} ₽</b>'.replace(',', ' '))
+            if comment: lines.append(f'💬 {comment}')
+            text = '\n'.join(lines)
+            payload = json.dumps({'chat_id': tg_chat, 'text': text, 'parse_mode': 'HTML'}).encode()
+            req = urllib.request.Request(
+                f'https://api.telegram.org/bot{tg_token}/sendMessage',
+                data=payload,
+                headers={'Content-Type': 'application/json'},
+                method='POST'
+            )
+            urllib.request.urlopen(req, timeout=5)
+    except Exception:
+        pass
 
     return {
         'statusCode': 200,

@@ -1,6 +1,34 @@
 import { useEffect, useState, useCallback } from "react";
 import Icon from "@/components/ui/icon";
 
+const ALLOWED_USERNAME = "flaskiy";
+
+function useTgAccess() {
+  const [username, setUsername] = useState<string>(() => localStorage.getItem("tg_username") || "");
+  const [inputVal, setInputVal] = useState("");
+  const [checking, setChecking] = useState(false);
+  const [accessDenied, setAccessDenied] = useState(false);
+
+  const isAllowed = username.toLowerCase().replace("@", "") === ALLOWED_USERNAME;
+
+  const confirm = () => {
+    setChecking(true);
+    const clean = inputVal.trim().toLowerCase().replace("@", "");
+    setTimeout(() => {
+      if (clean === ALLOWED_USERNAME) {
+        localStorage.setItem("tg_username", clean);
+        setUsername(clean);
+        setAccessDenied(false);
+      } else {
+        setAccessDenied(true);
+      }
+      setChecking(false);
+    }, 400);
+  };
+
+  return { isAllowed, inputVal, setInputVal, confirm, checking, accessDenied };
+}
+
 const MERCH_IMG = "https://cdn.poehali.dev/projects/a00ce720-a256-43b5-bf17-65d283f28886/files/40ce2d4d-b4a2-48c4-b60d-16b9a187eb5a.jpg";
 
 const PRODUCTS_URL = "https://functions.poehali.dev/fb6908c1-60d1-469c-b7b9-bd4b5be6dcd2";
@@ -31,6 +59,13 @@ export default function ShopSection({ cartOpen, setCartOpen, setCartCount }: Sho
   const [addedId, setAddedId] = useState<number | null>(null);
   const [orderForm, setOrderForm] = useState({ name: "", email: "", phone: "", address: "", comment: "" });
   const [orderLoading, setOrderLoading] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const { isAllowed, inputVal, setInputVal, confirm, checking, accessDenied } = useTgAccess();
+
+  const requireAccess = (cb: () => void) => {
+    if (isAllowed) cb();
+    else setLoginOpen(true);
+  };
 
   const sid = getSessionId();
 
@@ -86,7 +121,7 @@ export default function ShopSection({ cartOpen, setCartOpen, setCartCount }: Sho
               <div className="section-label mb-3">03 // мерч</div>
               <h2 className="font-oswald text-white font-bold tracking-tight" style={{ fontSize: "clamp(40px, 7vw, 80px)" }}>МАГАЗИН</h2>
             </div>
-            <button onClick={() => setCartOpen(true)} className="relative hidden md:flex items-center gap-2 btn-neon">
+            <button onClick={() => requireAccess(() => setCartOpen(true))} className="relative hidden md:flex items-center gap-2 btn-neon">
               <Icon name="ShoppingBag" size={16} />
               <span>Корзина {cartCount > 0 ? `(${cartCount})` : ""}</span>
             </button>
@@ -141,7 +176,7 @@ export default function ShopSection({ cartOpen, setCartOpen, setCartCount }: Sho
                     </div>
                     <button
                       disabled={outOfStock}
-                      onClick={() => !outOfStock && addToCart(item.id)}
+                      onClick={() => !outOfStock && requireAccess(() => addToCart(item.id))}
                       className="btn-neon mt-4 self-start"
                       style={{ padding: "8px 20px", fontSize: "0.65rem", opacity: outOfStock ? 0.35 : 1, background: isAdded ? "var(--neon)" : "", color: isAdded ? "#000" : "" }}>
                       <span>{isAdded ? "✓ Добавлено" : inCart ? "Ещё раз" : "В корзину"}</span>
@@ -194,7 +229,7 @@ export default function ShopSection({ cartOpen, setCartOpen, setCartCount }: Sho
                     <span className="font-mono-ibm text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Итого</span>
                     <span className="font-oswald text-white text-2xl font-bold">{cartTotal.toLocaleString("ru-RU")} ₽</span>
                   </div>
-                  <button onClick={() => { setCartOpen(false); setCheckoutOpen(true); }} className="btn-neon w-full justify-center">
+                  <button onClick={() => { setCartOpen(false); requireAccess(() => setCheckoutOpen(true)); }} className="btn-neon w-full justify-center">
                     <span>Оформить заказ</span>
                   </button>
                 </div>
@@ -258,6 +293,41 @@ export default function ShopSection({ cartOpen, setCartOpen, setCartCount }: Sho
                 * Оплата при получении или по договорённости. Мы свяжемся с тобой после оформления.
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── ВХОД ПО TELEGRAM ─── */}
+      {loginOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ background: "rgba(0,0,0,0.85)" }} onClick={() => setLoginOpen(false)}>
+          <div className="w-full max-w-sm px-8 py-10 text-center"
+            style={{ background: "#0d0d10", border: "1px solid rgba(176,48,255,0.25)" }}
+            onClick={e => e.stopPropagation()}>
+            <div className="font-oswald text-white text-xl font-bold tracking-wide mb-2">ДОСТУП ОГРАНИЧЕН</div>
+            <div className="font-mono-ibm text-xs mb-6" style={{ color: "rgba(255,255,255,0.3)", lineHeight: 1.8 }}>
+              Введи свой Telegram-юзернейм<br />для подтверждения доступа
+            </div>
+            <input
+              placeholder="@username"
+              value={inputVal}
+              onChange={e => setInputVal(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && confirm()}
+              autoFocus
+              className="w-full bg-transparent font-mono-ibm text-sm text-white px-4 py-3 outline-none mb-3"
+              style={{ border: "1px solid rgba(255,255,255,0.15)", textAlign: "center" }}
+            />
+            {accessDenied && (
+              <div className="font-mono-ibm text-xs mb-3" style={{ color: "#ff4040" }}>
+                Доступ запрещён
+              </div>
+            )}
+            <button
+              className="btn-neon w-full justify-center"
+              disabled={checking || !inputVal.trim()}
+              onClick={confirm}>
+              <span>{checking ? "Проверяю..." : "Войти"}</span>
+            </button>
           </div>
         </div>
       )}
