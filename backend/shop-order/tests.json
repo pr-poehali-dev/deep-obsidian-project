@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Order with empty cart",
+      "method": "POST",
+      "path": "/",
+      "headers": {"X-Session-Id": "test-session-empty"},
+      "body": {"name": "Test", "email": "test@test.com"},
+      "expectedStatus": 400,
+      "expectedBody": null,
+      "bodyMatcher": "none"
+    }
+  ]
+}

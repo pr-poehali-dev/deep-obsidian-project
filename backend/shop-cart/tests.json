@@ -1,0 +1,13 @@
+{
+  "tests": [
+    {
+      "name": "Get cart items",
+      "method": "GET",
+      "path": "/",
+      "headers": {"X-Session-Id": "test-session-123"},
+      "expectedStatus": 200,
+      "expectedBody": {},
+      "bodyMatcher": "partial"
+    }
+  ]
+}
