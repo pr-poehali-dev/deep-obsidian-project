@@ -265,8 +265,8 @@ export default function Index() {
           </div>
 
           <div className="mt-12 flex gap-4">
-            <button className="btn-neon"><span>Spotify</span></button>
-            <button className="btn-neon"><span>VK Music</span></button>
+            <a href="https://music.yandex.ru/artist/24448370" target="_blank" rel="noopener noreferrer" className="btn-neon"><span>Яндекс Музыка</span></a>
+            <a href="https://vk.com/artist/mrakobesie2_0" target="_blank" rel="noopener noreferrer" className="btn-neon"><span>VK Музыка</span></a>
           </div>
         </div>
       </section>
